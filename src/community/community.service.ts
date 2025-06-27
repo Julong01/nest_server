@@ -42,30 +42,5 @@ export class CommunityService {
     return prisma.post.delete({ where: { id } });
   }
 
-  async createComment(postId: number, userId: string, content: string, parentId?: number) {
-    return prisma.comment.create({
-      data: { postId, authorId: userId, content, parentId },
-    });
-  }
-
-  async getComments(postId: number) {
-    const comments = await prisma.comment.findMany({
-      where: { postId },
-      orderBy: { createdAt: 'asc' },
-    });
-    // 트리 구조 변환은 필요시 추가
-    return comments;
-  }
-
-  async updateComment(id: number, userId: string, content: string) {
-    const comment = await prisma.comment.findUnique({ where: { id } });
-    if (!comment || comment.authorId !== userId) throw new Error('권한이 없습니다.');
-    return prisma.comment.update({ where: { id }, data: { content } });
-  }
-
-  async deleteComment(id: number, userId: string) {
-    const comment = await prisma.comment.findUnique({ where: { id } });
-    if (!comment || comment.authorId !== userId) throw new Error('권한이 없습니다.');
-    return prisma.comment.delete({ where: { id } });
-  }
+  // 댓글 관련 메서드 완전 삭제
 } 
