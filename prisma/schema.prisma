@@ -6,7 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
+  //output   = "../generated/prisma"
 }
 
 datasource db {
@@ -15,14 +15,21 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(uuid()) // Firebase UID
-  email        String   @unique
-  displayName  String?
-  photoUrl     String?
-  createdAt    DateTime @default(now())
-  posts        Post[]
-  comments     Comment[]
+  id             String   @id @default(uuid())
+  loginId        String   @unique
+  passwordHash   String?
+  email          String?  @unique
+  emailVerified  Boolean  @default(false)
+  phone          String?  @unique
+  phoneVerified  Boolean  @default(false)
+  displayName    String?
+  photoUrl       String?
+  createdAt      DateTime @default(now())
+  posts          Post[]
+  comments       Comment[]
   reliabilityChecks ReliabilityCheck[]
+  refreshTokens  RefreshToken[]
+  socialAccounts SocialAccount[]
 }
 
 model News {
@@ -30,9 +37,16 @@ model News {
   title        String
   url          String   @unique
   content      String?
+  summary      String?  // 요약 내용
+  imageUrl     String?  // 썸네일 이미지
+  sourceName   String?  // 언론사 이름
+  sourceLogoUrl String? // 언론사 로고
   publishedAt  DateTime
   crawledAt    DateTime @default(now())
+  crawlStatus  String?  // 크롤링 상태 (예: success, fail)
+  crawlError   String?  // 크롤링 에러 메시지
   reliabilityChecks ReliabilityCheck[]
+  comments    Comment[]
 }
 
 model ReliabilityCheck {
@@ -53,15 +67,41 @@ model Post {
   title     String
   content   String
   createdAt DateTime @default(now())
-  comments  Comment[]
+  comments  Comment[] @relation("PostToComment")
 }
 
 model Comment {
   id        Int      @id @default(autoincrement())
-  post      Post     @relation(fields: [postId], references: [id])
-  postId    Int
+  news      News?    @relation(fields: [newsId], references: [id])
+  newsId    Int?
   author    User     @relation(fields: [authorId], references: [id])
   authorId  String
   content   String
+  parent    Comment? @relation("CommentToComment", fields: [parentId], references: [id])
+  parentId  Int?
+  children  Comment[] @relation("CommentToComment")
   createdAt DateTime @default(now())
+  post      Post?    @relation("PostToComment", fields: [postId], references: [id])
+  postId    Int?
+}
+
+model SocialAccount {
+  id         Int      @id @default(autoincrement())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+  provider   String
+  providerId String
+  email      String?
+  createdAt  DateTime @default(now())
+  @@unique([provider, providerId])
+}
+
+model RefreshToken {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  revoked   Boolean  @default(false)
 }
