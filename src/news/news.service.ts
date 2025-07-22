@@ -10,18 +10,19 @@ export class NewsService {
 
   async getNewsList(page = 1, limit = 10) {
     const [items, total] = await Promise.all([
-      prisma.news.findMany({
+      prisma.post.findMany({
+        where: { type: 'NEWS' },
         skip: (page - 1) * limit,
         take: limit,
         orderBy: { publishedAt: 'desc' },
       }),
-      prisma.news.count(),
+      prisma.post.count({ where: { type: 'NEWS' } }),
     ]);
-    return { items, total, page, limit }; 
+    return { items, total, page, limit };
   }
 
   async getNewsDetail(id: number) {
-    const news = await prisma.news.findUnique({
+    const news = await prisma.post.findUnique({
       where: { id },
       include: {
         reliabilityChecks: true,
@@ -31,4 +32,4 @@ export class NewsService {
     const comments = await this.commentService.getComments({ newsId: id });
     return { news, comments };
   }
-} 
+}

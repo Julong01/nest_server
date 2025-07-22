@@ -8,4 +8,4 @@ export class ApiResponse<T = any> {
     this.message = message;
     this.data = data;
   }
-} 
+}

@@ -6,9 +6,10 @@ import { CommunityController } from './community/community.controller';
 import { CommunityService } from './community/community.service';
 import { CommentController } from './comment/comment.controller';
 import { CommentService } from './comment/comment.service';
+import { NewsCrawlerModule } from './news/news-crawler.module';
 
 @Module({
-  imports: [AuthModule],
+  imports: [AuthModule, NewsCrawlerModule],
   controllers: [NewsController, CommunityController, CommentController],
   providers: [NewsService, CommunityService, CommentService],
 })

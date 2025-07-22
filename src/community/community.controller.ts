@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, Query, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Param,
+  Body,
+  Query,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { CommunityService } from '../community/community.service';
 import { AuthGuard } from '@nestjs/passport';
 import { CommentService } from '../comment/comment.service';
@@ -34,15 +45,26 @@ export class CommunityController {
   @ApiOkResponse({ type: ApiResponseDto })
   @UseGuards(AuthGuard('jwt'))
   @Post('posts')
-  async createPost(@Body() body: { title: string; content: string }, @Request() req) {
-    return this.communityService.createPost(req.user.userId, body.title, body.content);
+  async createPost(
+    @Body() body: { title: string; content: string },
+    @Request() req,
+  ) {
+    return this.communityService.createPost(
+      req.user.userId,
+      body.title,
+      body.content,
+    );
   }
 
   @ApiOperation({ summary: '게시글 수정' })
   @ApiOkResponse({ type: ApiResponseDto })
   @UseGuards(AuthGuard('jwt'))
   @Put('posts/:id')
-  async updatePost(@Param('id') id: string, @Body() body: { title?: string; content?: string }, @Request() req) {
+  async updatePost(
+    @Param('id') id: string,
+    @Body() body: { title?: string; content?: string },
+    @Request() req,
+  ) {
     return this.communityService.updatePost(Number(id), req.user.userId, body);
   }
 
@@ -82,8 +104,16 @@ export class CommunityController {
   @ApiOkResponse({ type: ApiResponseDto })
   @UseGuards(AuthGuard('jwt'))
   @Put('comments/:id')
-  async updateComment(@Param('id') id: string, @Body() body: { content: string }, @Request() req) {
-    return this.commentService.updateComment(Number(id), req.user.userId, body.content);
+  async updateComment(
+    @Param('id') id: string,
+    @Body() body: { content: string },
+    @Request() req,
+  ) {
+    return this.commentService.updateComment(
+      Number(id),
+      req.user.userId,
+      body.content,
+    );
   }
 
   @ApiOperation({ summary: '댓글 삭제' })
@@ -93,4 +123,4 @@ export class CommunityController {
   async deleteComment(@Param('id') id: string, @Request() req) {
     return this.commentService.deleteComment(Number(id), req.user.userId);
   }
-} 
+}

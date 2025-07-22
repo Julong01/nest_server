@@ -26,11 +26,15 @@ export class CommunityService {
 
   async createPost(userId: string, title: string, content: string) {
     return prisma.post.create({
-      data: { authorId: userId, title, content },
+      data: { authorId: userId, title, content, type: 'COMMUNITY' },
     });
   }
 
-  async updatePost(id: number, userId: string, data: { title?: string; content?: string }) {
+  async updatePost(
+    id: number,
+    userId: string,
+    data: { title?: string; content?: string },
+  ) {
     const post = await prisma.post.findUnique({ where: { id } });
     if (!post || post.authorId !== userId) throw new Error('권한이 없습니다.');
     return prisma.post.update({ where: { id }, data });
@@ -43,4 +47,4 @@ export class CommunityService {
   }
 
   // 댓글 관련 메서드 완전 삭제
-} 
+}

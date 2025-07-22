@@ -25,13 +25,13 @@ export class CommentService {
       orderBy: { createdAt: 'asc' },
     });
     // 트리 구조 변환
-    type CommentTree = typeof comments[0] & { children: CommentTree[] };
+    type CommentTree = (typeof comments)[0] & { children: CommentTree[] };
     const map: { [id: number]: CommentTree } = {};
     const roots: CommentTree[] = [];
-    comments.forEach(comment => {
+    comments.forEach((comment) => {
       map[comment.id] = { ...comment, children: [] };
     });
-    comments.forEach(comment => {
+    comments.forEach((comment) => {
       if (comment.parentId) {
         map[comment.parentId]?.children.push(map[comment.id]);
       } else {
@@ -43,13 +43,15 @@ export class CommentService {
 
   async updateComment(id: number, authorId: string, content: string) {
     const comment = await prisma.comment.findUnique({ where: { id } });
-    if (!comment || comment.authorId !== authorId) throw new Error('권한이 없습니다.');
+    if (!comment || comment.authorId !== authorId)
+      throw new Error('권한이 없습니다.');
     return prisma.comment.update({ where: { id }, data: { content } });
   }
 
   async deleteComment(id: number, authorId: string) {
     const comment = await prisma.comment.findUnique({ where: { id } });
-    if (!comment || comment.authorId !== authorId) throw new Error('권한이 없습니다.');
+    if (!comment || comment.authorId !== authorId)
+      throw new Error('권한이 없습니다.');
     return prisma.comment.delete({ where: { id } });
   }
-} 
+}

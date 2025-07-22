@@ -1,2 +1,2 @@
 export * from './news.controller';
-export * from './news.service'; 
+export * from './news.service';

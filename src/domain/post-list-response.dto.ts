@@ -13,4 +13,4 @@ export class PostListResponseDto {
 
   @ApiProperty({ example: 10 })
   limit: number;
-} 
+}

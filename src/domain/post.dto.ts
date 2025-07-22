@@ -15,4 +15,4 @@ export class PostDto {
 
   @ApiProperty({ example: '2024-06-28T12:00:00Z', description: '작성일' })
   createdAt: string;
-} 
+}

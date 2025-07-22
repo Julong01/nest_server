@@ -9,4 +9,4 @@ export class ApiResponseDto<T> {
 
   @ApiProperty()
   data: T;
-} 
+}

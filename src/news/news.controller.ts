@@ -1,12 +1,23 @@
-import { Controller, Get, Query, Param, Post, Body, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Query,
+  Param,
+  Post,
+  Body,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { NewsService } from '../news/news.service';
 import { AuthGuard } from '@nestjs/passport';
 import { CommentService } from '../comment/comment.service';
 import { ApiTags, ApiOperation, ApiBody, ApiOkResponse } from '@nestjs/swagger';
-import { NewsDto } from '../domain/news.dto';
-import { CommentDto } from '../domain/comment.dto';
 import { ApiResponseDto } from '../domain/api-response.dto';
-import { NewsDetailResponseDto } from '../domain/news-detail-response.dto';
+
+// Request 타입을 커스텀으로 지정
+interface JwtRequest extends Request {
+  user: { userId: string };
+}
 
 @ApiTags('news')
 @Controller('news')
@@ -38,10 +49,10 @@ export class NewsController {
   async createComment(
     @Param('id') id: string,
     @Body() body: { content: string; parentId?: number },
-    @Request() req,
+    @Request() req: JwtRequest,
   ) {
     return this.commentService.createComment({
-      newsId: Number(id),
+      postId: Number(id),
       authorId: req.user.userId,
       content: body.content,
       parentId: body.parentId,
@@ -52,6 +63,6 @@ export class NewsController {
   @ApiOkResponse({ type: ApiResponseDto })
   @Get(':id/comments')
   async getComments(@Param('id') id: string) {
-    return this.commentService.getComments({ newsId: Number(id) });
+    return this.commentService.getComments({ postId: Number(id) });
   }
-} 
+}

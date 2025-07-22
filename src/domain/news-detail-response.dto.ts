@@ -8,4 +8,4 @@ export class NewsDetailResponseDto {
 
   @ApiProperty({ type: [CommentDto], description: '댓글 트리' })
   comments: CommentDto[];
-} 
+}
